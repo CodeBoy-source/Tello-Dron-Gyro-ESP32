@@ -1,4 +1,5 @@
 # Prototipo de guante para el control de Tello.
+
 Esta es la versión que utiliza datos del acelerómetro, más limpio que
 el uso del giroscopio cuyo código se encuentra en otra rama, para
 el control del drone Tello por medio de ESP32.
@@ -16,8 +17,7 @@ nombre del wifi que genera el drone a probar en particular.
 
 Para ejecutar es necesario mínimo 2 cables del guante, ya que para
 enviar el comando principal `takeoff/land` es necesario el uso de
-un cable, que sería el pulgar, que está a `5V` y cuyo ground sería el
-`pin 25`.
+un cable, que sería el pulgar, que está a `5V` y cuyo ground sería el `pin 25`.
 
 Sin embargo, se recomienda conectar todos los pines:
 ```
@@ -30,4 +30,4 @@ Sin embargo, se recomienda conectar todos los pines:
   // Flip
   pinMode(33, INPUT_PULLUP);
 ```
-
+Have fun!
