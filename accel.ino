@@ -50,10 +50,20 @@ void setup()
   pinMode(18,OUTPUT);
   pinMode(17,OUTPUT);
   pinMode(16,OUTPUT);
-  
+
   digitalWrite(18,HIGH);
   digitalWrite(17,LOW);
   digitalWrite(16,LOW);
+
+  // subir
+  pinMode(4, INPUT_PULLUP);
+  // Bajar
+  pinMode(15, INPUT_PULLUP);
+  // Despegar / Aterrizar
+  pinMode(25, INPUT_PULLUP);
+  // Flip
+  pinMode(33, INPUT_PULLUP);
+
 
 	Serial.begin(115200);
 	Serial.setTimeout(0);
@@ -100,6 +110,7 @@ void loop()
 	if (!Connected)
 	{
     String command = "TELLO-5ACC7D";
+    Serial.println(command);
     char SSID[65];
     strcpy(SSID, command.c_str());
     WiFi.begin(SSID);
@@ -108,17 +119,17 @@ void loop()
     String command = "command";
     TelloCLI.write(command.c_str(), command.length());
     delay(100);
-    command = "speed 10";
+    command = "speed 100";
     TelloCLI.write(command.c_str(), command.length());
     delay(100);
-    Command = true; 
+    Command = true;
     digitalWrite(18,LOW);
     digitalWrite(17,HIGH);
     digitalWrite(16,LOW);
 	}
 	else
 	{
-		if (touchRead(13) <= 30)
+		if (!digitalRead(25))
 		{
       String command = "rc 0 0 0 0";
       TelloCLI.write(command.c_str(), command.length());
@@ -132,25 +143,25 @@ void loop()
       }
       TelloCLI.write(command.c_str(), command.length());
 		}
-		else if (touchRead(33) <= 30 && takeoff)
+		else if (!digitalRead(33) && takeoff)
 		{
 			String command = "flip ";
 			command += flipside;
 			TelloCLI.write(command.c_str(), command.length());
 		}
-		else if(!takeoff)
+		else if(takeoff)
 		{
 			double eje_x = sensor.getAccelX()*-1;
-			double eje_y = sensor.getAccelY();
+			double eje_y = sensor.getAccelY()*-1;
 
-      float pitch = 0; 
-      float roll = 0; 
+      float pitch = 0;
+      float roll = 0;
       float throttle = 0;
 
-      if (touchRead(32) <= 30) {
+      if(!digitalRead(15)) {
         throttle -= 40;
       }
-      if (touchRead(4) <= 30) {
+      if(!digitalRead(4)) {
         throttle += 40;
       }
 
@@ -159,17 +170,6 @@ void loop()
 				//Direccion x positiva: hacia la derecha, negativa: hacia la izquierda
         pitch = eje_x * 60;
 				if(eje_x > 0){
-					flipside = 'r';
-				}
-				else
-				{
-					flipside = 'l';
-				}
-			}
-			if (eje_y > 0.35 || eje_y < -0.35)
-			{
-        roll = eje_y * 60; 
-				if(eje_y > 0){
 					flipside = 'f';
 				}
 				else
@@ -177,8 +177,19 @@ void loop()
 					flipside = 'b';
 				}
 			}
+			if (eje_y > 0.35 || eje_y < -0.35)
+			{
+        roll = eje_y * 60;
+				if(eje_y > 0){
+					flipside = 'r';
+				}
+				else
+				{
+					flipside = 'l';
+				}
+			}
 			String command = "rc " + String(roll) + " " + String(pitch) + " " + String(throttle) + " 0";
-      //Serial.println(command);
+      Serial.println(command);
 			TelloCLI.write(command.c_str(), command.length());
 			commandSent = true;
 		}
