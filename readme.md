@@ -17,7 +17,8 @@ nombre del wifi que genera el drone a probar en particular.
 
 Para ejecutar es necesario mínimo 2 cables del guante, ya que para
 enviar el comando principal `takeoff/land` es necesario el uso de
-un cable, que sería el pulgar, que está a `5V` y cuyo ground sería el `pin 25`.
+un cable, que sería el pulgar, que está a `5V` y cuyo ground 
+sería el `pin 25`.
 
 Sin embargo, se recomienda conectar todos los pines:
 ```
